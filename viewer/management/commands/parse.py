@@ -12,6 +12,7 @@ from zipfile import ZipFile
 import re
 from sauce import SAUCE
 
+FNULL = open(os.devnull, 'w')
 
 class Command(BaseCommand):
 	help = 'Parse a zipped pack and import it to the database'
@@ -52,17 +53,59 @@ class Command(BaseCommand):
 
 			# Get a list of the extracted files
 			file_list = []
+
+			allowed_piece_extensions = [
+				'.txt',
+				'.ans',
+				'.asc',
+				'.bin',
+				'.xb',
+				'.nfo',
+				'.diz',
+				'.tnd',
+				'.rip',
+				'.adf',
+				'.avt',
+				'.idf',
+				'.cg',
+				'.jpg',
+				'.jpeg',
+				'.gif',
+				'.png',
+				'.bmp',
+				'.tiff',
+				'.tif',
+			]
+
+			allowed_ansilove_extensions = [
+				'.txt',
+				'.ans',
+				'.asc',
+				'.bin',
+				'.xb',
+				'.nfo',
+				'.diz',
+				'.tnd',
+				'.rip',
+				'.adf',
+				'.avt',
+				'.idf',
+				'.cg',
+			]
 			for file in os.listdir( zip_dir ):
 				if os.path.isfile( os.path.join(zip_dir, file) ):
 					extension = os.path.splitext(file)[1]
-					if extension in [ '.txt', '.ans', '.asc', '.bin', '.xb', '.nfo', '.diz', '.tnd', '.rip', '.adf', '.avt', '.idf', '.cg', '.jpg', '.jpeg', '.gif', '.png', '.bmp', '.tiff', '.tif'] :
+					if extension.lower() in allowed_piece_extensions:
 						file_list.append( file )
+					else:
+						print 'EXCLUDING: ' + str(file)
+
 
 
 			# Add each piece to the DB
 			for file in file_list:
-				# Probably should check first if piece exists, and if so, overwrite?
-				# ????
+				print '\n\n\n'
+				print '================================================================================='
 
 				piece_name = None
 				piece_date = None
@@ -73,7 +116,6 @@ class Command(BaseCommand):
 				piece_ch_width = None
 				piece_ch_height = None
 				piece_slug = None
-
 
 				filename_pieces = file.split('-')
 				filename_artist = filename_pieces[0].strip()
@@ -138,30 +180,26 @@ class Command(BaseCommand):
 
 				file_ext = os.path.splitext(file)[1]
 				file_no_ext = os.path.splitext(file)[0]
-				# Create preview image, but only for textmode files.
-				if file_ext in [ '.txt', '.ans', '.asc', '.bin', '.xb', '.nfo', '.diz', '.tnd', '.rip', '.adf', '.avt', '.idf', '.cg']:
+
+				# Use ansilove to create a preview image, but only for textmode files.
+				if file_ext in allowed_ansilove_extensions:
 					# If we found a character width in SAUCE, pass it to the renderer. 
 					# Right now ansilove only respects this for BINs, but I'm hoping they will soon add column support for ANSI as well.
 					if piece_ch_width:
-						print( 'ansilove', '-c', str(piece_ch_width), '-o', os.path.join(zip_dir,'previews',file_no_ext+'.png'), os.path.join(zip_dir,file) )
 						subprocess.check_output([ 'ansilove', '-c', str(piece_ch_width), '-o', os.path.join(zip_dir,'previews',file_no_ext+'.png'), os.path.join(zip_dir,file) ])
 					# Otherwise cross fingers and hope ansilove does it right
 					else:
 						subprocess.check_output([ 'ansilove', '-o', os.path.join(zip_dir,'previews',file_no_ext+'.png'), os.path.join(zip_dir,file) ])
-				# Just copy PNGs, GIFs, etc to the preview directory
+
+				# JPGs, GIFs, TIFs, etc will server as their own previews. Just copy the image file to the preview directory
 				else:
 					subprocess.check_output([ 'cp', os.path.join(zip_dir,file), os.path.join(zip_dir,'previews',file) ])
-
-
-
-
 
 
 
 				# Search for artist. If not found, search for handle. If not found, just leave it blank.
 
 				# TO-DO: 
-				#        * Handle MULTIPLE artists
 				#        * Create NEW artist when can't find one in the database
 
 				# Check for delimiters that might indicate multiple artists
@@ -185,37 +223,53 @@ class Command(BaseCommand):
 						try:
 							piece_artists.append( Artist.objects.get(handle__iexact=p) )
 						except:
+							# THIS IS WHERE WE WOULD CODE ADDING ARTISTS, I GUESS?
 							pass
 
 
 				# Search for piece. If it's already in the DB, then just update it. Otherwise, create new piece object.
-
 				try:
-					piece = Piece.objects.filter(file__iexact=os.path.join(zip_dir, file), pack__iexact=pack)
-					piece.name = piece_name
-					slug = piece_slug
-					piece.pack = pack
-					piece.date = piece_date
-					piece.graphics_format = piece_filetype
-					if len(piece_artists) > 0:
-						for p in piece_artists:
-							piece.artists.add( p )
-					piece.save()
-				except:
-					piece = Piece(
-						name = piece_name,
-						slug = piece_slug,
-						file = os.path.join(zip_dir, file),
-						pack = pack,
-						date = piece_date,
-						graphics_format = piece_filetype,
-					)
-					piece.save()
-					# Django wants an id to exist first before adding manytomany fields. 
-					# So we save the Piece above to create the id, then add the artists.
-					if piece_artist:
-						piece.artists.add( piece_artist )
+					piece = Piece.objects.filter(file__iexact=os.path.join(zip_dir, file), pack=pack)
+					if len(piece) == 1:
+						piece = piece[0]
+						piece.name = piece_name
+						slug = piece_slug
+						piece.pack = pack
+						piece.date = piece_date
+						piece.graphics_format = piece_filetype
+						if len(piece_artists) > 0:
+							for p in piece_artists:
+								piece.artists.add( p )
 						piece.save()
+						print '---------------------------------------------------------------------------------'
+						print 'FOUND ONE INSTANCE OF ' + os.path.join(zip_dir, file) + ' IN DB. UPDATING.'
+						print '================================================================================='
+					elif len(piece) == 0:
+						piece = Piece(
+							name = piece_name,
+							slug = piece_slug,
+							file = os.path.join(zip_dir, file),
+							pack = pack,
+							date = piece_date,
+							graphics_format = piece_filetype,
+						)
+						piece.save()
+						# Django wants an id to exist first before adding manytomany fields. 
+						# So we save the Piece above to create the id, then add the artists.
+						if piece_artist:
+							piece.artists.add( piece_artist )
+							piece.save()
+						print '---------------------------------------------------------------------------------'
+						print 'FOUND ZERO INSTANCES OF ' + os.path.join(zip_dir, file) + ' IN DB. ADDING.'
+						print '================================================================================='
+					else:
+						print '---------------------------------------------------------------------------------'
+						print 'FOUND MULTIPLE INSTANCES OF ' + os.path.join(zip_dir, file) + ' IN DB.'
+						print '================================================================================='
+				except Exception as e:
+					print '---------------------------------------------------------------------------------'
+					print 'Exception: ' + str(e)
+					print '================================================================================='
 
 
 			# pack.opened = False

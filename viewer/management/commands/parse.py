@@ -116,6 +116,7 @@ class Command(BaseCommand):
 				piece_ch_width = None
 				piece_ch_height = None
 				piece_slug = None
+				piece_preview_path = None
 
 				filename_pieces = file.split('-')
 				filename_artist = filename_pieces[0].strip()
@@ -190,11 +191,14 @@ class Command(BaseCommand):
 					# Otherwise cross fingers and hope ansilove does it right
 					else:
 						subprocess.check_output([ 'ansilove', '-o', os.path.join(zip_dir,'previews',file_no_ext+'.png'), os.path.join(zip_dir,file) ])
+					
+					piece_preview_path = os.path.join(zip_dir,'previews',file_no_ext+'.png')
 
 				# JPGs, GIFs, TIFs, etc will server as their own previews. Just copy the image file to the preview directory
 				else:
 					subprocess.check_output([ 'cp', os.path.join(zip_dir,file), os.path.join(zip_dir,'previews',file) ])
 
+					piece_preview_path = os.path.join(zip_dir,'previews',file)
 
 
 				# Search for artist. If not found, search for handle. If not found, just leave it blank.
@@ -237,6 +241,8 @@ class Command(BaseCommand):
 						piece.pack = pack
 						piece.date = piece_date
 						piece.graphics_format = piece_filetype
+						piece.preview = piece_preview_path
+
 						if len(piece_artists) > 0:
 							for p in piece_artists:
 								piece.artists.add( p )
@@ -252,6 +258,7 @@ class Command(BaseCommand):
 							pack = pack,
 							date = piece_date,
 							graphics_format = piece_filetype,
+							preview = piece_preview_path,
 						)
 						piece.save()
 						# Django wants an id to exist first before adding manytomany fields. 

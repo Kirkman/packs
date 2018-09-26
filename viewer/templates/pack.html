@@ -1,0 +1,23 @@
+{% load static %}
+
+
+<h1>{{pack.name}}</h1>
+<h2>{{group.name}}</h2>
+
+{% if pieces %}
+	<ul>
+	{% for piece in pieces %}
+		<li>
+			<h3>{{ piece.name }}</h3>
+        	<a href="{% url 'piece' piece_slug=piece.slug pack_slug=pack.slug %}">
+        		<img src="{{ piece.preview }}" />
+        		<p>{{ piece.name }} by {{ piece.artist.name }}</p>
+        	</a>
+		</li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No pieces are available.</p>
+{% endif %}
+
+

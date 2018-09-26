@@ -22,6 +22,9 @@ def get_pack_path(instance, filename):
 def get_piece_path(instance, filename):
 	return os.path.join('static', 'images', str(instance.pack.group.slug), str(instance.pack.slug), filename)
 
+def get_piece_preview_path(instance, filename):
+	return os.path.join('static', 'images', str(instance.pack.group.slug), 'previews', str(instance.pack.slug), filename)
+
 class Group(models.Model):
 	# id = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=100)
@@ -78,6 +81,8 @@ class Piece(models.Model):
 
 	date = models.DateField(auto_now=False, auto_now_add=False)
 	graphics_format = models.CharField(max_length=100, blank=True, null=True)
+
+	preview = models.FileField(upload_to=get_piece_preview_path, storage=OverwriteStorage(), blank=True )
 
 	def __str__(self):
 		return self.name

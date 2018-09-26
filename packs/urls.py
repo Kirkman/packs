@@ -15,7 +15,25 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from viewer import views
+
+
+app_name = 'viewer'
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    # ex: /viewer/
+    url(r'^$', views.index, name='index'),
+    # ex: /viewer/group/blocktronics/
+    url(r'group/(?P<group_slug>[\w-]+)/$', views.group, name='group'),
+    # ex: /viewer/artist/kirkman
+    url(r'artist/(?P<artist_slug>[\w-]+)/$', views.artist, name='artist'),
+    # ex: /viewer/artist/blocktronics/blocktronics-6710
+    url(r'pack/(?P<group_slug>[\w-]+)/(?P<pack_slug>[\w-]+)/$', views.pack, name='pack'),
+    # ex: /viewer/blocktronics-6710/we-are-a-nation-of-immigrants/
+    url(r'piece/(?P<pack_slug>[\w-]+)/(?P<piece_slug>[\w-]+)/$', views.piece, name='piece'),
 ]
+
+
+
+

@@ -23,7 +23,7 @@ def get_piece_path(instance, filename):
 	return os.path.join('static', 'images', str(instance.pack.group.slug), str(instance.pack.slug), filename)
 
 def get_piece_preview_path(instance, filename):
-	return os.path.join('static', 'images', str(instance.pack.group.slug), 'previews', str(instance.pack.slug), filename)
+	return os.path.join('images', str(instance.pack.group.slug), 'previews', str(instance.pack.slug), filename)
 
 class Group(models.Model):
 	# id = models.AutoField(primary_key=True)

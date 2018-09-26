@@ -14,8 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
+from django.conf import settings
 from django.contrib import admin
 from viewer import views
+from django.conf.urls.static import static
 
 
 app_name = 'viewer'
@@ -32,7 +34,7 @@ urlpatterns = [
     url(r'pack/(?P<group_slug>[\w-]+)/(?P<pack_slug>[\w-]+)/$', views.pack, name='pack'),
     # ex: /viewer/blocktronics-6710/we-are-a-nation-of-immigrants/
     url(r'piece/(?P<pack_slug>[\w-]+)/(?P<piece_slug>[\w-]+)/$', views.piece, name='piece'),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 
 

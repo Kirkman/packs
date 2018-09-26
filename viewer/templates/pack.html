@@ -1,23 +1,26 @@
+{% extends '_base.html' %}
 {% load static %}
 
+{% block content %}
 
-<h1>{{pack.name}}</h1>
-<h2>{{group.name}}</h2>
+	<h1>{{pack.name}}</h1>
+	<h2>{{group.name}}</h2>
 
-{% if pieces %}
-	<ul>
-	{% for piece in pieces %}
-		<li>
-			<h3>{{ piece.name }}</h3>
-        	<a href="{% url 'piece' piece_slug=piece.slug pack_slug=pack.slug %}">
-        		<img src="{{ piece.preview }}" />
-        		<p>{{ piece.name }} by {{ piece.artist.name }}</p>
-        	</a>
-		</li>
-	{% endfor %}
-	</ul>
-{% else %}
-	<p>No pieces are available.</p>
-{% endif %}
+	{% if pieces %}
+		<ul class="wrapper">
+		{% for piece in pieces %}
+			<li>
+				<h3>{{ piece.name }}</h3>
+				<a href="{% url 'piece' piece_slug=piece.slug pack_slug=pack.slug %}">
+					<img src="{% static piece.preview %}" />
+					<p>{{ piece.name }} by {{ piece.artist.name }}</p>
+				</a>
+			</li>
+		{% endfor %}
+		</ul>
+	{% else %}
+		<p>No pieces are available.</p>
+	{% endif %}
 
 
+{% endblock content %}

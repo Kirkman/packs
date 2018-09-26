@@ -1,17 +1,23 @@
-{% if latest_pack_list %}
-	<ul>
-	{% for pack in latest_pack_list %}
-		<li>
-			<h3>{{ pack.group.name }}</h3>
-<!--		 	<h2><a href="/packs/{{ pack.slug }}/">{{ pack.name }}</a></h2> -->
-        	<h2><a href="{% url 'pack' group_slug=pack.group.slug pack_slug=pack.slug %}">{{ pack.name }}</a></h2>
+{% extends '_base.html' %}
 
-			<p>{{pack.group.slug}}/{{pack.slug}}/
+{% block content %}
 
-			<p>{{ pack.date }}</p>
-		</li>
-	{% endfor %}
-	</ul>
-{% else %}
-	<p>No packs are available.</p>
-{% endif %}
+
+	{% if latest_pack_list %}
+		<ul>
+		{% for pack in latest_pack_list %}
+			<li>
+				<h3>{{ pack.group.name }}</h3>
+				<h2><a href="{% url 'pack' group_slug=pack.group.slug pack_slug=pack.slug %}">{{ pack.name }}</a></h2>
+
+				<p>{{pack.group.slug}}/{{pack.slug}}/
+
+				<p>{{ pack.date }}</p>
+			</li>
+		{% endfor %}
+		</ul>
+	{% else %}
+		<p>No packs are available.</p>
+	{% endif %}
+
+{% endblock content %}

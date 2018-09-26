@@ -192,13 +192,13 @@ class Command(BaseCommand):
 					else:
 						subprocess.check_output([ 'ansilove', '-o', os.path.join(zip_dir,'previews',file_no_ext+'.png'), os.path.join(zip_dir,file) ])
 					
-					piece_preview_path = os.path.join(zip_dir,'previews',file_no_ext+'.png')
+					piece_preview_path = os.path.join(zip_dir,'previews',file_no_ext+'.png').replace('static/','')
 
 				# JPGs, GIFs, TIFs, etc will server as their own previews. Just copy the image file to the preview directory
 				else:
 					subprocess.check_output([ 'cp', os.path.join(zip_dir,file), os.path.join(zip_dir,'previews',file) ])
 
-					piece_preview_path = os.path.join(zip_dir,'previews',file)
+					piece_preview_path = os.path.join(zip_dir,'previews',file).replace('static/','')
 
 
 				# Search for artist. If not found, search for handle. If not found, just leave it blank.

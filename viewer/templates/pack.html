@@ -10,10 +10,9 @@
 		<ul class="wrapper">
 		{% for piece in pieces %}
 			<li>
-				<h3>{{ piece.name }}</h3>
-				<a href="{% url 'piece' piece_slug=piece.slug pack_slug=pack.slug %}">
+				<a href="{% url 'piece' group_slug=group.slug piece_slug=piece.slug pack_slug=pack.slug %}">
 					<img src="{% static piece.preview %}" />
-					<p>{{ piece.name }} by {{ piece.artist.name }}</p>
+					<h3>{{ piece.name }}</h3>
 				</a>
 			</li>
 		{% endfor %}

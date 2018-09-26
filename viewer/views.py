@@ -43,8 +43,20 @@ def pack(request, group_slug, pack_slug):
 
 	return HttpResponse("You're looking at pack %s." % pack_slug)
 
-def piece(request, pack_slug, piece_slug):
-	return HttpResponse("You're looking at the results of piece %s." % piece_slug)
+def piece(request, group_slug, pack_slug, piece_slug):
+	this_group = Group.objects.get(slug=group_slug)
+	this_pack = get_object_or_404(Pack, slug=pack_slug, group=this_group)
+	this_piece = get_object_or_404(Piece, slug=piece_slug, pack=this_pack)
+
+	context = {
+		'group': this_group,
+		'piece': this_piece,
+		'pack': this_pack,
+	}
+	# template = loader.get_template('index.html')
+	# return HttpResponse(template.render(context, request))
+	return render(request, 'piece.html', context)
+
 
 def artist(request, artist_slug):
 	return HttpResponse("You're voting on question %s." % artist_slug)

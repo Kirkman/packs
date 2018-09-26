@@ -1,0 +1,21 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block content %}
+
+	<h1>{{piece.name}}</h1>
+	<h2>{{group.name}} > {{pack.name}}</h2>
+
+	{% if piece %}
+		<div class="piece">
+			<img src="{% static piece.preview %}" />
+			<h3>{{ piece.name }}</h3>
+			{% if piece.artists.all %}
+			<h4>by {% for artist in piece.artists.all %} {{artist.name}} {% endfor %}</h4>
+			{% endif %}
+		</div>
+	{% else %}
+		<p>This piece is not available.</p>
+	{% endif %}
+
+{% endblock content %}

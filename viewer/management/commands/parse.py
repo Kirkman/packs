@@ -183,7 +183,7 @@ class Command(BaseCommand):
 				file_no_ext = os.path.splitext(file)[0]
 
 				# Use ansilove to create a preview image, but only for textmode files.
-				if file_ext in allowed_ansilove_extensions:
+				if file_ext.lower() in allowed_ansilove_extensions:
 					# If we found a character width in SAUCE, pass it to the renderer. 
 					# Right now ansilove only respects this for BINs, but I'm hoping they will soon add column support for ANSI as well.
 					if piece_ch_width:

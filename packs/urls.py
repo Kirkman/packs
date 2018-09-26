@@ -33,7 +33,7 @@ urlpatterns = [
     # ex: /viewer/artist/blocktronics/blocktronics-6710
     url(r'pack/(?P<group_slug>[\w-]+)/(?P<pack_slug>[\w-]+)/$', views.pack, name='pack'),
     # ex: /viewer/blocktronics-6710/we-are-a-nation-of-immigrants/
-    url(r'piece/(?P<pack_slug>[\w-]+)/(?P<piece_slug>[\w-]+)/$', views.piece, name='piece'),
+    url(r'pack/(?P<group_slug>[\w-]+)/(?P<pack_slug>[\w-]+)/(?P<piece_slug>[\w-]+)/$', views.piece, name='piece'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

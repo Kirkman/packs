@@ -1,18 +1,21 @@
 {% extends '_base.html' %}
 {% load static %}
+{% load viewer_tags %}
 
 {% block content %}
 
-	<h1>{{piece.name}}</h1>
-	<h2>{{group.name}} > {{pack.name}}</h2>
-
 	{% if piece %}
 		<div class="piece">
-			<img src="{% static piece.preview %}" />
-			<h3>{{ piece.name }}</h3>
+			<h1 class="title meta">{{piece.name}}</h1>
 			{% if piece.artists.all %}
-			<h4>by {% for artist in piece.artists.all %} {{artist.name}} {% endfor %}</h4>
+			<h2 class="artist meta">by {% for artist in piece.artists.all %} {{artist.name}} {% endfor %}</h2>
 			{% endif %}
+			<h3 class="pack meta">{{pack.name}}</h2>
+			<h3 class="group meta">{{group.name}}</h2>
+
+			<img src="{% static piece.preview %}" />
+
+			<p class="download meta"><a href="{% static piece.file_path|one_static %}">{{piece.file_name}}</a></p>
 		</div>
 	{% else %}
 		<p>This piece is not available.</p>

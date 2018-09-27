@@ -73,7 +73,8 @@ class Piece(models.Model):
 	# id = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=100)
 	slug = models.SlugField(max_length=100)
-	file = models.FileField(upload_to=get_piece_path, storage=OverwriteStorage() )
+	file_path = models.FileField(upload_to=get_piece_path, storage=OverwriteStorage() )
+	file_name = models.CharField(max_length=100, blank=True)
 
 	artists = models.ManyToManyField(Artist, blank=True) # At parse time, may not be possible to identify the artist(s)
 	# artists = models.ForeignKey(Artist, on_delete=models.CASCADE, null=True)

@@ -233,11 +233,12 @@ class Command(BaseCommand):
 
 				# Search for piece. If it's already in the DB, then just update it. Otherwise, create new piece object.
 				try:
-					piece = Piece.objects.filter(file__iexact=os.path.join(zip_dir, file), pack=pack)
+					piece = Piece.objects.filter(file_path__iexact=os.path.join(zip_dir, file), pack=pack)
 					if len(piece) == 1:
 						piece = piece[0]
 						piece.name = piece_name
 						slug = piece_slug
+						file_name = file,
 						piece.pack = pack
 						piece.date = piece_date
 						piece.graphics_format = piece_filetype
@@ -254,7 +255,8 @@ class Command(BaseCommand):
 						piece = Piece(
 							name = piece_name,
 							slug = piece_slug,
-							file = os.path.join(zip_dir, file),
+							file_path = os.path.join(zip_dir, file),
+							file_name = file,
 							pack = pack,
 							date = piece_date,
 							graphics_format = piece_filetype,

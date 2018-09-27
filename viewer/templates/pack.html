@@ -1,25 +1,27 @@
 {% extends '_base.html' %}
 {% load static %}
+{% load viewer_tags %}
 
 {% block content %}
 
-	<h1>{{pack.name}}</h1>
-	<h2>{{group.name}}</h2>
+	<div class="pack">
+		<h1 class="title meta">{{pack.name}}</h1>
+		<h2 class="group meta">{{group.name}}</h2>
 
-	{% if pieces %}
-		<ul class="wrapper">
-		{% for piece in pieces %}
-			<li>
-				<a href="{% url 'piece' group_slug=group.slug piece_slug=piece.slug pack_slug=pack.slug %}">
-					<img src="{% static piece.preview %}" />
-					<h3>{{ piece.name }}</h3>
-				</a>
-			</li>
-		{% endfor %}
-		</ul>
-	{% else %}
-		<p>No pieces are available.</p>
-	{% endif %}
-
+		{% if pieces %}
+			<ul class="wrapper">
+			{% for piece in pieces %}
+				<li>
+					<a href="{% url 'piece' group_slug=group.slug piece_slug=piece.slug pack_slug=pack.slug %}">
+						<img src="{% static piece.preview|one_static %}" />
+						<h3>{{ piece.name }}</h3>
+					</a>
+				</li>
+			{% endfor %}
+			</ul>
+		{% else %}
+			<p>No pieces are available.</p>
+		{% endif %}
+	</div>
 
 {% endblock content %}

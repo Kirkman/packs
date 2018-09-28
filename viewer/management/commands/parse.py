@@ -101,6 +101,7 @@ class Command(BaseCommand):
 						print 'EXCLUDING: ' + str(file)
 
 
+			artists_not_found = []
 
 			# Add each piece to the DB
 			for file in file_list:
@@ -207,9 +208,9 @@ class Command(BaseCommand):
 				#        * Create NEW artist when can't find one in the database
 
 				# Check for delimiters that might indicate multiple artists
-				if piece_artist_name and any(x in piece_artist_name for x in [',','/','\\','|'] ):
+				if piece_artist_name and any(x in piece_artist_name for x in [',','/','\\','|','+','&',' and '] ):
 					# Split the string at any of these delimiters: , / \ |
-					piece_artists_names = re.split(r'\s*,\s*|\s*/\s*|\s*\\\s*|\s*\|\s*',piece_artist_name )
+					piece_artists_names = re.split(r'\s*and\s*|\s*&\s*|\s*\+\s*|\s*,\s*|\s*/\s*|\s*\\\s*|\s*\|\s*',piece_artist_name )
 					# Remove blanks
 					piece_artists_names = filter(None, piece_artists_names)
 					print piece_artists_names
@@ -218,6 +219,7 @@ class Command(BaseCommand):
 				else:
 					piece_artists_names = []
 
+				print piece_artists_names
 
 				piece_artists = []
 				for p in piece_artists_names:
@@ -228,7 +230,10 @@ class Command(BaseCommand):
 							piece_artists.append( Artist.objects.get(handle__iexact=p) )
 						except:
 							# THIS IS WHERE WE WOULD CODE ADDING ARTISTS, I GUESS?
+							if p not in artists_not_found:
+								artists_not_found.append(p)
 							pass
+				print piece_artists
 
 
 				# Search for piece. If it's already in the DB, then just update it. Otherwise, create new piece object.
@@ -280,6 +285,10 @@ class Command(BaseCommand):
 					print 'Exception: ' + str(e)
 					print '================================================================================='
 
+
+				print '\n\n\n\n'
+				print 'ARTISTS NOT FOUND IN DB:'
+				print artists_not_found
 
 			# pack.opened = False
 			# pack.save()

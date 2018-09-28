@@ -22,8 +22,8 @@ def index(request):
 	# return HttpResponse(template.render(context, request))
 	return render(request, 'index.html', context)
 
-def group(request, pack_slug):
-	return HttpResponse("You're looking at pack %s." % pack_slug)
+def group(request, group_slug):
+	return HttpResponse("You're looking at pack %s." % group_slug)
 
 def pack(request, group_slug, pack_slug):
 	this_group = Group.objects.get(slug=group_slug)
@@ -35,8 +35,6 @@ def pack(request, group_slug, pack_slug):
 		'pack': this_pack,
 		'group': this_group,
 	}
-	# template = loader.get_template('index.html')
-	# return HttpResponse(template.render(context, request))
 	return render(request, 'pack.html', context)
 
 
@@ -53,10 +51,15 @@ def piece(request, group_slug, pack_slug, piece_slug):
 		'piece': this_piece,
 		'pack': this_pack,
 	}
-	# template = loader.get_template('index.html')
-	# return HttpResponse(template.render(context, request))
 	return render(request, 'piece.html', context)
 
 
 def artist(request, artist_slug):
-	return HttpResponse("You're voting on question %s." % artist_slug)
+	this_artist = Artist.objects.get(slug=artist_slug)
+	artist_pieces = Piece.objects.filter(artists=this_artist)
+
+	context = {
+		'artist': this_artist,
+		'pieces': artist_pieces,
+	}
+	return render(request, 'artist.html', context)

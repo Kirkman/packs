@@ -1,0 +1,31 @@
+{% extends '_base.html' %}
+{% load static %}
+{% load viewer_tags %}
+
+{% block content %}
+
+	<div class="artist">
+		<h1 class="title meta">{{artist.name}}</h1>
+		{% if artist.groups.count > 0 %}
+		<h2 class="group meta">{% for group in artist.groups.all %} <a href="{% url 'group' group_slug=group.slug %}">{{group.name}}</a> {% endfor %}</h2>
+		{% endif %}
+	</div>
+
+	{% if pieces %}
+		<ul class="wrapper">
+		{% for piece in pieces %}
+		{% with pack=piece.pack %}
+			<li>
+				<a href="{% url 'piece' group_slug=pack.group.slug piece_slug=piece.slug pack_slug=pack.slug %}">
+					<img src="{% static piece.preview|one_static %}" />
+					<h3>{{ piece.name }}</h3>
+				</a>
+			</li>
+		{% endwith %}
+		{% endfor %}
+		</ul>
+	{% else %}
+		<p>No pieces are available.</p>
+	{% endif %}
+
+{% endblock content %}
